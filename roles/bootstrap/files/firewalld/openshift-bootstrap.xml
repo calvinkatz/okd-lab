@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>openshift-bootstrap</short>
+  <description>OpenShift Bootstrap services</description>
+  <port protocol="tcp" port="1936"/>
+  <port protocol="tcp" port="6443"/>
+  <port protocol="tcp" port="22623"/>
+</service>

@@ -1,0 +1,56 @@
+---
+- name: Copy Files
+  ansible.builtin.copy:
+    src: files/install-config.yaml
+    dest: /opt/okd/
+
+- name: Download OpenShift Install
+  ansible.builtin.get_url:
+    url: "{{ install_url }}"
+    dest: /opt/okd/install.tar.gz
+
+- name: Extract OpenShift Install
+  ansible.builtin.unarchive:
+    src: /opt/okd/install.tar.gz
+    dest: /usr/local/bin
+    remote_src: true
+    include: openshift-install
+
+- name: Download OpenShift Client
+  ansible.builtin.get_url:
+    url: "{{ client_url }}"
+    dest: /opt/okd/client.tar.gz
+
+- name: Extract OpenShift Client
+  ansible.builtin.unarchive:
+    src: /opt/okd/client.tar.gz
+    dest: /usr/local/bin
+    remote_src: true
+    include:
+    - oc
+    - kubectl
+
+- name: Create FCOS dir
+  ansible.builtin.file:
+    path: /opt/okd/http
+    state: directory
+
+- name: Query FCOS images
+  ansible.builtin.shell: |
+    openshift-install coreos print-stream-json | \
+      grep -Eo 'https.*live.*\.x86_64+(\.img|\.iso)?' | \
+      sort -u
+  register: images
+
+- name: Download FCOS images
+  ansible.builtin.get_url:
+    url: "{{ item }}"
+    dest: /opt/okd/http/
+  loop: "{{ images.stdout_lines }}"
+
+- name: Set permissions on OKD folder
+  ansible.builtin.file:
+    path: /opt/okd
+    owner: ansible
+    group: ansible
+    recurse: true

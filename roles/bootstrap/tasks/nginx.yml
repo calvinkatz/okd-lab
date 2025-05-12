@@ -1,0 +1,22 @@
+---
+- name: Install Packages
+  ansible.builtin.dnf:
+    name: nginx
+    state: latest
+
+- name: Copy Files
+  copy: src={{ item.src }} dest={{ item.dest }} mode='0644'
+  with_items:
+  - { src: 'files/nginx/nginx.conf', dest: '/etc/nginx/nginx.conf' }
+  - { src: 'files/nginx/artifacts.conf', dest: '/etc/nginx/conf.d/artifacts.conf' }
+
+- name: Enable Services
+  ansible.builtin.systemd_service:
+    name: nginx.service
+    enabled: true
+
+- name: Allow HTTP traffic
+  ansible.posix.firewalld:
+    port: 8080/tcp
+    state: enabled
+    permanent: true

@@ -1,0 +1,38 @@
+---
+- name: Install Packages
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+  - nsd
+  - unbound
+
+- name: Copy Configs
+  copy: src={{ item.src }} dest={{ item.dest }} mode='0644'
+  with_items:
+  - { src: 'files/nsd/okd-server.conf', dest: '/etc/nsd/server.d/' }
+  - { src: 'files/nsd/okd.conf', dest: '/etc/nsd/conf.d/' }
+  - { src: 'files/nsd/okd.zone', dest: '/etc/nsd/' }
+  - { src: 'files/nsd/192.168.40.zone', dest: '/etc/nsd/' }
+  - { src: 'files/unbound/okd.conf', dest: '/etc/unbound/conf.d/' }
+
+- name: Allow DNS traffic
+  ansible.posix.firewalld:
+    service: dns
+    state: enabled
+    permanent: true
+
+- name: Enable DNS server
+  ansible.builtin.systemd_service:
+    name: "{{ item }}"
+    enabled: true
+  with_items:
+  - nsd.service
+  - unbound.service
+
+- name: Set permissions on NSD folder
+  ansible.builtin.file:
+    path: /var/lib/nsd
+    owner: nsd
+    group: nsd
+    recurse: true

@@ -1,0 +1,21 @@
+---
+- name: Install Packages
+  ansible.builtin.dnf:
+    name: kea
+    state: latest
+
+- name: Copy Configs
+  copy: src={{ item.src }} dest={{ item.dest }} mode='0644'
+  with_items:
+  - { src: 'files/kea/kea-dhcp4.json', dest: '/etc/kea/kea-dhcp4.conf' }
+
+- name: Allow DHCP traffic
+  ansible.posix.firewalld:
+    service: dhcp
+    state: enabled
+    permanent: true
+
+- name: Enable DNS server
+  ansible.builtin.systemd_service:
+    name: kea-dhcp4.service
+    enabled: true

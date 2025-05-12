@@ -1,0 +1,22 @@
+---
+- name: Install dns
+  import_tasks: dns.yml
+
+- name: Install tftp
+  import_tasks: tftp.yml
+
+- name: Install dhcp
+  import_tasks: dhcp.yml
+
+- name: Install haproxy
+  import_tasks: haproxy.yml
+
+- name: Install nginx
+  import_tasks: nginx.yml
+
+- name: Install openshift binaries
+  import_tasks: openshift.yml
+
+# Reboot to apply all changes
+- name: Reboot
+  ansible.builtin.reboot:

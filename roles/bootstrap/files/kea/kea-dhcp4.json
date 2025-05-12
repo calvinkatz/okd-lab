@@ -1,0 +1,74 @@
+{
+    "Dhcp4": {
+        "interfaces-config": {
+            "interfaces": [ "ens18" ],
+            "dhcp-socket-type": "raw"
+        },
+        "lease-database": {
+            "type": "memfile",
+            "persist": true,
+            "name": "/tmp/kea-leases4.csv",
+            "lfc-interval": 1800,
+            "max-row-errors": 100
+        },
+        "valid-lifetime": 3600,
+        "renew-timer": 1000,
+        "rebind-timer": 2000,
+        "subnet4": [
+            {
+                "subnet": "192.168.40.0/24",
+                "id": 1024,
+                "next-server": "192.168.40.5",
+                "boot-file-name": "pxelinux.0",
+                "server-hostname": "okd-boot.okd.example.com",
+                "pools": [ { "pool": "192.168.40.100-192.168.40.200" } ],
+                "option-data": [
+                    {"name":"routers",              "data":"192.168.40.1"},
+                    {"name":"domain-name-servers",  "data":"192.168.40.5"},
+                    {"name":"ntp-servers",          "data":"192.168.40.1"},
+                ],
+                "reservations": [
+                    {
+                        "hw-address": "BC:24:11:0B:F0:78",
+                        "ip-address": "192.168.40.10",
+                        "hostname": "bootstrap"
+                    },
+                    {
+                        "hw-address": "BC:24:11:EA:82:C8",
+                        "ip-address": "192.168.40.21",
+                        "hostname": "con01"
+                    },
+                    {
+                        "hw-address": "BC:24:11:40:0D:5E",
+                        "ip-address": "192.168.40.22",
+                        "hostname": "con02"
+                    },
+                    {
+                        "hw-address": "BC:24:11:D7:3A:C3",
+                        "ip-address": "192.168.40.23",
+                        "hostname": "con03"
+                    },
+                    {
+                        "hw-address": "BC:24:11:39:87:9B",
+                        "ip-address": "192.168.40.24",
+                        "hostname": "cpu01"
+                    },
+                    {
+                        "hw-address": "BC:24:11:38:9C:E0",
+                        "ip-address": "192.168.40.25",
+                        "hostname": "cpu02"
+                    },
+                    {
+                        "hw-address": "BC:24:11:4B:B2:B2",
+                        "ip-address": "192.168.40.26",
+                        "hostname": "cpu03"
+                    }
+                ]
+            }
+        ],
+       "loggers": [{
+            "name": "*",
+            "severity": "INFO"
+        }]
+    }
+}

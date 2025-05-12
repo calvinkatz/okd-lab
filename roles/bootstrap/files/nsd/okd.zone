@@ -1,0 +1,31 @@
+$ORIGIN okd.example.com.
+$TTL 1800 ; default time-to-live for this zone
+
+@ IN SOA okd-boot.okd.example.com. admin.okd.example.com. (
+        2025050903  ;Serial
+        3600        ;Refresh
+        900         ;Retry
+        1209600     ;Expire
+        1800        ;Negative response caching TTL
+)
+
+; The nameservers that are authoritative for this zone.
+                NS      okd-boot.okd.example.com.
+okd-boot    IN  A       192.168.40.5
+
+; API Endpoints
+api         IN  A       192.168.40.5
+api-int     IN  A       192.168.40.5
+*.apps      IN  A       192.168.40.5
+
+; Nodes
+bootstrap   IN  A       192.168.40.10
+boot01      IN  A       192.168.40.10
+
+con01       IN  A       192.168.40.21
+con02       IN  A       192.168.40.22
+con03       IN  A       192.168.40.23
+
+cpu01       IN  A       192.168.40.24
+cpu02       IN  A       192.168.40.25
+cpu03       IN  A       192.168.40.26

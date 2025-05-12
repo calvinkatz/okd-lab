@@ -1,0 +1,39 @@
+---
+- name: Bastion Deploy
+  hosts: bootstrap
+  serial: 1
+  become: true
+  roles:
+  - bootstrap
+
+- name: Bastion Setup
+  hosts: bootstrap
+  serial: 1
+  become: false
+
+  tasks:
+  - name: Create SSH key
+    ansible.builtin.shell: |
+      yes | ssh-keygen -q -N '' -f ~/.ssh/id_rsa
+
+  - name: Create manifests
+    ansible.builtin.shell: |
+      openshift-install create manifests --dir /opt/okd
+
+  - name: Disable control plane scheduling
+    ansible.builtin.shell: |
+      sed -i "s/mastersSchedulable: true/mastersSchedulable: false/" /opt/okd/manifests/cluster-scheduler-02-config.yml
+
+  - name: Create ignition
+    ansible.builtin.shell: |
+      openshift-install create ignition-configs --dir /opt/okd
+
+  - name: Copy ignitions
+    ansible.builtin.copy:
+      src: "{{ item }}"
+      dest: /opt/okd/http/
+      remote_src: true
+    with_items:
+    - /opt/okd/master.ign
+    - /opt/okd/worker.ign
+    - /opt/okd/bootstrap.ign

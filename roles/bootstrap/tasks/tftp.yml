@@ -1,0 +1,35 @@
+---
+- name: Install Packages
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+  - syslinux-tftpboot
+  - tftp-server
+
+- name: Copy boot files
+  ansible.builtin.copy:
+    src: /tftpboot/
+    dest: /var/lib/tftpboot/
+    remote_src: true
+
+- name: Create TFTP dir
+  ansible.builtin.file:
+    path: /var/lib/tftpboot/pxelinux.cfg
+    state: directory
+
+- name: Copy grub menu
+  ansible.builtin.copy:
+    src: files/default.menu
+    dest: /var/lib/tftpboot/pxelinux.cfg/default
+
+- name: Allow TFTP traffic
+  ansible.posix.firewalld:
+    service: tftp
+    state: enabled
+    permanent: true
+
+- name: Enable TFTP server
+  ansible.builtin.systemd_service:
+    name: tftp.socket
+    enabled: true

@@ -1,0 +1,25 @@
+$ORIGIN okd.example.com.
+$TTL 1800 ; default time-to-live for this zone
+
+40.168.192.in-addr.arpa. IN SOA okd-boot.okd.example.com. admin.okd.example.com. (
+        2025050903  ;Serial
+        3600        ;Refresh
+        900         ;Retry
+        1209600     ;Expire
+        1800        ;Negative response caching TTL
+)
+
+; API Endpoints
+5.40.168.192.in-addr.arpa.      IN  PTR     api.okd.example.com.
+5.40.168.192.in-addr.arpa.      IN  PTR     api-int.okd.example.com.
+
+; Nodes
+10.40.168.192.in-addr.arpa.     IN  PTR     bootstrap.okd.example.com.
+
+21.40.168.192.in-addr.arpa.     IN  PTR     con01.okd.example.com.
+22.40.168.192.in-addr.arpa.     IN  PTR     con02.okd.example.com.
+23.40.168.192.in-addr.arpa.     IN  PTR     con03.okd.example.com.
+
+24.40.168.192.in-addr.arpa.     IN  PTR     cpu01.okd.example.com.
+25.40.168.192.in-addr.arpa.     IN  PTR     cpu02.okd.example.com.
+26.40.168.192.in-addr.arpa.     IN  PTR     cpu03.okd.example.com.

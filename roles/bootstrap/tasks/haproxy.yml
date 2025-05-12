@@ -1,0 +1,43 @@
+---
+- name: Install Packages
+  ansible.builtin.dnf:
+    name: haproxy
+    state: latest
+
+- name: Copy Files
+  copy: src={{ item.src }} dest={{ item.dest }} mode='0644'
+  with_items:
+  - { src: 'files/haproxy/haproxy.cfg', dest: '/etc/haproxy/haproxy.cfg' }
+  - { src: 'files/haproxy/api.cfg', dest: '/etc/haproxy/conf.d/' }
+  - { src: 'files/haproxy/ingress.cfg', dest: '/etc/haproxy/conf.d/' }
+  - { src: 'files/haproxy/machine.cfg', dest: '/etc/haproxy/conf.d/' }
+  - { src: 'files/haproxy/stats.cfg', dest: '/etc/haproxy/conf.d/' }
+  - { src: 'files/firewalld/openshift-bootstrap.xml', dest: '/etc/firewalld/services/' }
+
+- name: Enable Services
+  ansible.builtin.systemd_service:
+    name: haproxy.service
+    enabled: true
+
+- name: Allow HAProxy Bind
+  ansible.builtin.shell: |
+    setsebool -P haproxy_connect_any=1
+
+- name: Reload firewalld
+  ansible.builtin.shell: |
+    systemctl reload firewalld
+
+- name: Allow OKD bootstrap traffic
+  ansible.posix.firewalld:
+    service: "openshift-bootstrap"
+    state: enabled
+    permanent: true
+
+- name: Allow HTTP/HTTPS bootstrap traffic
+  ansible.posix.firewalld:
+    service: "{{ item }}"
+    state: enabled
+    permanent: true
+  with_items:
+  - http
+  - https
