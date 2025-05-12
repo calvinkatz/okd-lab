@@ -74,7 +74,7 @@ sudo chmod 440 /etc/sudoers.d/ansible
 
 ## Bootstrap Deployment
 
-Run the bootstrap playbook from remote host:
+Run the bootstrap playbook from ansible host:
 
 ```bash
 ansible-playbook -i hosts.yml bootstrap.yml
@@ -99,7 +99,7 @@ openshift-install --dir /opt/okd wait-for bootstrap-complete --log-level=debug
 
 #### Bootstrap Node
 
-After deployment of the bootstrap node, the monitoring task will show similar:
+After deployment of the bootstrap node, the `openshift-install` task will show similar:
 
 ```text
 INFO API v1.31.7-dirty up                         
